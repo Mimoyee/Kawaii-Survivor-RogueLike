@@ -1,22 +1,30 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class MobileJoystick : MonoBehaviour
 {
-    [Header(" Elements ")]
+    [Header(" UI 摇杆Transform ")]
     [SerializeField] private RectTransform joystickOutline;
     [SerializeField] private RectTransform joystickKnob;
 
-    [Header(" Settings ")]
+    [Header(" 移动速度倍率 ")]
     [SerializeField] private float moveFactor;
     private Vector3 clickedPosition;
-    private Vector3 move;
+    private Vector3 move_offset;
     private bool canControl;
+    [SerializeField] float canvasScale = 1f;
+    Canvas canvas;
+    Camera uiCamera;
 
-    // Start is called before the first frame update
     void Start()
     {
+        canvas = GetComponentInParent<Canvas>();
+        uiCamera = canvas.worldCamera;
+
+        canvasScale = canvas.GetComponent<RectTransform>().localScale.x;
+
         HideJoystick();
     }
 
@@ -25,17 +33,37 @@ public class MobileJoystick : MonoBehaviour
         HideJoystick();
     }
 
-    // Update is called once per frame
+
     void Update()
     {
-        if(canControl)
+        if (canControl)
             ControlJoystick();
     }
 
+    //面板点击事件PointerDown, EventTrigger
     public void ClickedOnJoystickZoneCallback()
     {
-        clickedPosition = Input.mousePosition;
-        joystickOutline.position = clickedPosition;
+        if (canvas.renderMode == RenderMode.ScreenSpaceOverlay)
+        {
+            //获取点击位置
+            clickedPosition = Input.mousePosition;
+            //设置joystickOutline外框的位置
+            joystickOutline.position = clickedPosition;
+        }
+        else //如果Canvas不是Overlay类型，= ScreenSpace Camera
+        {
+            // 将鼠标屏幕坐标转换为UI的RectTransform局部坐标
+            Vector2 mousePos2D;
+            RectTransformUtility.ScreenPointToLocalPointInRectangle(
+                joystickOutline.parent as RectTransform,
+                Input.mousePosition,
+                uiCamera,
+                out mousePos2D);
+
+            // 更新位置
+            clickedPosition = mousePos2D;
+            joystickOutline.localPosition = clickedPosition;
+        }
 
         ShowJoystick();
     }
@@ -50,37 +78,77 @@ public class MobileJoystick : MonoBehaviour
     {
         joystickOutline.gameObject.SetActive(false);
         canControl = false;
-
-        move = Vector3.zero;
+        //重置位置
+        move_offset = Vector3.zero;
     }
 
     private void ControlJoystick()
     {
-        Vector3 currentPosition = Input.mousePosition;
-        Vector3 direction = currentPosition - clickedPosition;
+        Vector3 currentPosition;
+        Vector3 direction;
+        Vector3 targetPosition;
+        float moveMagnitude;
+        float absoluteWidth;
+        float realWidth;
 
-        float canvasScale = GetComponentInParent<Canvas>().GetComponent<RectTransform>().localScale.x;
+        if (canvas.renderMode == RenderMode.ScreenSpaceOverlay)
+        {
+            currentPosition = Input.mousePosition;
+            //Debug.Log("当前位置 = " + currentPosition);
+            direction = currentPosition - clickedPosition; //获取鼠标位置与点击位置的方向
 
-        float moveMagnitude = direction.magnitude * moveFactor * canvasScale;
+            absoluteWidth = joystickOutline.rect.width / 2;
 
-        float absoluteWidth = joystickOutline.rect.width / 2;
-        float realWidth = absoluteWidth * canvasScale;
+            realWidth = absoluteWidth * canvasScale;
 
-        moveMagnitude = Mathf.Min(moveMagnitude, realWidth);
+            moveMagnitude = direction.magnitude * moveFactor * canvasScale;;
+            //限制移动距离 = 取两者最小值
+            moveMagnitude = Mathf.Min(moveMagnitude, realWidth);
+            //最终移动方向 = 方向向量 * 移动距离
+            move_offset = direction.normalized * moveMagnitude;
+            //圆点目标位置 = 点击位置 + 最终移动方向
+            targetPosition = clickedPosition + move_offset;
+            //限制内部圆点位置在屏幕范围内
+            joystickKnob.position = targetPosition;
+        }
+        else //如果Canvas类型 = ScreenSpace Camera
+        {
+            // 将鼠标屏幕坐标转换为UI的RectTransform局部坐标
+            Vector2 mousePos2D;
+            RectTransformUtility.ScreenPointToLocalPointInRectangle(
+                joystickOutline.parent as RectTransform,
+                Input.mousePosition,
+                uiCamera,
+                out mousePos2D);
 
-        move = direction.normalized * moveMagnitude;
-        
-        Vector3 targetPosition = clickedPosition + move;
+            currentPosition = mousePos2D;
 
-        joystickKnob.position = targetPosition;
+            direction = currentPosition - clickedPosition;
+    
+            absoluteWidth = joystickOutline.rect.width / 2;
+           
+            move_offset = direction.normalized * absoluteWidth;
 
+            targetPosition = joystickOutline.transform.position;
+
+            joystickKnob.localPosition =  targetPosition + move_offset;
+        }
+
+        //松开鼠标时隐藏摇杆
         if (Input.GetMouseButtonUp(0))
             HideJoystick();
     }
 
     public Vector3 GetMoveVector()
     {
-        float canvasScale = GetComponentInParent<Canvas>().GetComponent<RectTransform>().localScale.x;
-        return move / canvasScale;
+        if (canvas.renderMode == RenderMode.ScreenSpaceOverlay)
+        {
+            return move_offset / canvasScale;
+        }
+        else //如果Canvas类型 = ScreenSpace Camera
+        {
+             return move_offset;
+        }      
     }
+
 }
