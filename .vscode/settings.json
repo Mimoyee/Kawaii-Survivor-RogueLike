@@ -56,5 +56,5 @@
         "temp/": true,
         "Temp/": true
     },
-    "dotnet.defaultSolution": "Kawiii Roguelike.sln"
+    "dotnet.defaultSolution": "Kawaii-Survivor-RogueLike.sln"
 }
