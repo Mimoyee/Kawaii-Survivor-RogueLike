@@ -99,7 +99,7 @@ public class MobileJoystick : MonoBehaviour
 
             realWidth = absoluteWidth * canvasScale;
 
-            moveMagnitude = direction.magnitude * moveFactor * canvasScale;;
+            moveMagnitude = direction.magnitude * moveFactor * canvasScale; ;
             //限制移动距离 = 取两者最小值
             moveMagnitude = Mathf.Min(moveMagnitude, realWidth);
             //最终移动方向 = 方向向量 * 移动距离
@@ -131,7 +131,7 @@ public class MobileJoystick : MonoBehaviour
             //圆点起始位置 = 外圈中心位置
             targetPosition = joystickOutline.transform.position;
             //圆点目标移动位置 = 圆点起始位置 + 偏移量
-            joystickKnob.localPosition =  targetPosition + move_offset;
+            joystickKnob.localPosition = targetPosition + move_offset;
         }
 
         //松开鼠标时隐藏摇杆
@@ -147,8 +147,8 @@ public class MobileJoystick : MonoBehaviour
         }
         else //如果Canvas类型 = ScreenSpace Camera
         {
-             return move_offset;
-        }      
+            return move_offset;
+        }
     }
 
 }
