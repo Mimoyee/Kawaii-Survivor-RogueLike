@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -121,16 +119,18 @@ public class MobileJoystick : MonoBehaviour
                 uiCamera,
                 out mousePos2D);
 
-            currentPosition = mousePos2D;
+            currentPosition = mousePos2D;//拖拽鼠标移动的位置
 
-            direction = currentPosition - clickedPosition;
-    
-            absoluteWidth = joystickOutline.rect.width / 2;
-           
-            move_offset = direction.normalized * absoluteWidth;
-
+            direction = currentPosition - clickedPosition;//获取鼠标位置与点击位置的方向
+            moveMagnitude = direction.magnitude;//方向的长度
+            absoluteWidth = joystickOutline.rect.width / 2;//限制圆点在外圈范围内
+            //限制移动距离 = 最小值是拖动方向的长度, 最大值 = 外圈范围 / 2
+            moveMagnitude = Mathf.Min(moveMagnitude, absoluteWidth);
+            //移动的偏移量 = 方向向量 * 移动距离
+            move_offset = direction.normalized * moveMagnitude;
+            //圆点起始位置 = 外圈中心位置
             targetPosition = joystickOutline.transform.position;
-
+            //圆点目标移动位置 = 圆点起始位置 + 偏移量
             joystickKnob.localPosition =  targetPosition + move_offset;
         }
 
