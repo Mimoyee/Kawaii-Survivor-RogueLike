@@ -724,10 +724,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerTransform: {fileID: 0}
   useCameraClame: 1
-  Min_X: -67.59
-  Max_X: 67.59
-  Min_Y: -25
-  Max_Y: 25
+  MinMax_X: 73
+  MinMax_Y: 30
   cameraSpeed: 4
 --- !u!1 &549472832
 GameObject:
@@ -1657,7 +1655,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: -3
   m_Sprite: {fileID: 21300000, guid: 7e1593f5320871546bd95c6fcecd6afa, type: 3}
-  m_Color: {r: 0.0754717, g: 0.0754717, b: 0.0754717, a: 1}
+  m_Color: {r: 0.28, g: 0.28, b: 0.28, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 2

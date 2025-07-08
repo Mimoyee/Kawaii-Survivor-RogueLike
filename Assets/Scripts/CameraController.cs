@@ -9,7 +9,7 @@ public class CameraController : MonoBehaviour
 {
     [SerializeField] Transform playerTransform; // 玩家Transform引用
     [SerializeField, Header("摄像机限制移动范围")] bool useCameraClame = false;
-    [SerializeField] float Min_X, Max_X, Min_Y, Max_Y; // 摄像机移动的最小/最大X、Y坐标
+    [SerializeField] float MinMax_X, MinMax_Y; // 摄像机移动的最小/最大X、Y坐标
     [SerializeField, Header("摄像机跟随速度")] float cameraSpeed = 1f; // 摄像机跟随速度
 
     /// <summary>
@@ -38,8 +38,8 @@ public class CameraController : MonoBehaviour
         {
             // 限制摄像机的X、Y坐标在指定范围内，Z轴固定为-10
             transform.position = new Vector3(
-            Mathf.Clamp(transform.position.x, Min_X, Max_X),
-            Mathf.Clamp(transform.position.y, Min_Y, Max_Y),
+            Mathf.Clamp(transform.position.x, -MinMax_X, MinMax_X),
+            Mathf.Clamp(transform.position.y, -MinMax_Y, MinMax_Y),
             -10);
         }
         else
