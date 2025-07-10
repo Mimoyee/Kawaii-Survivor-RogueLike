@@ -1,8 +1,8 @@
-
 using System.Collections; // 引入系统集合命名空间
 using System.Collections.Generic; // 引入泛型集合命名空间
 using UnityEngine; // 引入Unity引擎命名空间
 
+//[ExecuteInEditMode] // 允许在编辑模式下执行脚本
 /// <summary>
 /// 根据物体的y坐标动态调整SpriteRenderer的sortingOrder，实现2D层级排序（y越小越靠前）
 /// </summary>
@@ -37,7 +37,7 @@ public class SpriteSorter : MonoBehaviour
             spriteRenderer.sortingOrder = (int)(currentY * -10);
             // 记录本次y坐标，便于下次对比
             lastY = currentY;
-            Debug.Log($"Sprite层级排序:<color=yellow>{gameObject.name}</color> 的 y 坐标已更新为 {currentY}，排序顺序已更新为 {spriteRenderer.sortingOrder}");
+            //Debug.Log($"Sprite层级排序:<color=yellow>{gameObject.name}</color> 的 y 坐标已更新为 {currentY}，排序顺序已更新为 {spriteRenderer.sortingOrder}");
         }
     }
 }
