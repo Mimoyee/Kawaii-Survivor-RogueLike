@@ -11,10 +11,13 @@ public class CameraController : MonoBehaviour
     [SerializeField, Header("摄像机限制移动范围")] bool useCameraClame = false;
     [SerializeField] float MinMax_X, MinMax_Y; // 摄像机移动的最小/最大X、Y坐标
     [SerializeField, Header("摄像机跟随速度")] float cameraSpeed = 1f; // 摄像机跟随速度
+    
+    [Header("摄像机缩放")]
+    [SerializeField] float zoomStartSize = 7f;
+    [SerializeField]float zoomEndSize = 5f;
+    [SerializeField] float zoomDuration = 2f;
+    [SerializeField] float zoomSpeed = 2f;
 
-    /// <summary>
-    /// 在Awake中查找Player对象并获取其Transform
-    /// </summary>
     void Awake()
     {
         // 通过标签找到Player对象，并获取其Transform
@@ -24,13 +27,12 @@ public class CameraController : MonoBehaviour
     void Start()
     {
         transform.position = new Vector3(0, 0, -10);
+        StartCoroutine(ZoomIn()); // 启动摄像机缩放协程
     }
 
-    /// <summary>
-    /// 在LateUpdate中让摄像机平滑跟随玩家，并限制摄像机移动范围
-    /// </summary>
     void LateUpdate()
     {
+        if (playerTransform == null || GameManager.Instance.player.isDead) return; // 如果玩家Transform未设置，则不执行任何操作
         // 使用Lerp实现摄像机平滑跟随玩家
         transform.position = Vector3.Lerp(transform.position, playerTransform.position, cameraSpeed * Time.deltaTime);
         // 如果useCameraClame为true，则限制摄像机的X、Y坐标在指定范围内
@@ -47,5 +49,21 @@ public class CameraController : MonoBehaviour
             transform.position = new Vector3(transform.position.x, transform.position.y, -10);
         }
 
+    }
+
+    IEnumerator ZoomIn()
+    {
+        Camera.main.orthographicSize = zoomStartSize;
+        float elapsedTime = 0f;
+        
+        while (elapsedTime < zoomDuration)
+        {
+            elapsedTime += Time.deltaTime * zoomSpeed;
+            float t = Mathf.Clamp01(elapsedTime / zoomDuration);
+            Camera.main.orthographicSize = Mathf.Lerp(zoomStartSize, zoomEndSize, t);
+            yield return null;
+        }
+        
+        Camera.main.orthographicSize = zoomEndSize; // 确保最终精确值
     }
 }
