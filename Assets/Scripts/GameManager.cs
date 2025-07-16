@@ -10,9 +10,9 @@ public class GameManager : MonoBehaviour
 
     [Header("引用")]
     public Player player;
-    public PlayerController playerController;
     public UIManager uiManager;
     public SceneLoadManager sceneLoadManager;
+    public float delayStartTime = 1.5f;
 
     void Awake()
     {
@@ -26,7 +26,7 @@ public class GameManager : MonoBehaviour
             Destroy(gameObject);
         }
 
-        
+
     }
 
     void OnEnable()
@@ -51,13 +51,13 @@ public class GameManager : MonoBehaviour
             }
         }
 
-        playerController = player.GetComponent<PlayerController>();
+        player.Init(); // 初始化玩家
+
         uiManager = FindAnyObjectByType<UIManager>();
         sceneLoadManager = GetComponent<SceneLoadManager>();
 
         uiManager.Init();
-        playerController.isInitDone = true;
-        
+
         Debug.Log("GameManager 初始化完成");
         yield return null;
     }

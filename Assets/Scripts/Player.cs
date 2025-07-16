@@ -5,33 +5,29 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
+    public PlayerHealth playerHealth;
+    public PlayerController playerController;
+
     [Header("玩家属性")]
-    public int currentHealth = 100; // 玩家生命值
-    public int maxHealth = 100; // 玩家最大生命值
-    public int currentLevelXP = 100;
-    public int NextLevelXP = 100;
     public int attackDamage = 10; // 玩家攻击力
     public float attackRange = 1f; // 玩家攻击范围
     [HideInInspector] public bool isDead = false; // 玩家是否死亡
     private HitNum hitNum; // HitNum组件引用
 
-    void Start()
+    // void Start()
+    // {
+    //     Init();
+    // }
+
+
+    public void Init()
     {
-        Init();
-    }
-
-
-    void Update()
-    {
-
-    }
-
-    void Init()
-    {
-        // 初始化玩家相关设置
-        currentHealth = maxHealth;
         hitNum = transform.Find("Hit_Num").GetComponent<HitNum>();
-
+        playerController = GetComponent<PlayerController>();
+        playerHealth = GetComponent<PlayerHealth>();
+        playerHealth.Init(); // 初始化玩家生命值
+        playerController.isInitDone = true; // 初始化完成
+        Debug.Log("Player 初始化完成");
     }
 
     public void Attack()
@@ -41,22 +37,22 @@ public class Player : MonoBehaviour
 
     public void Heal(int amount)
     {
-        currentHealth += amount;
-        if (currentHealth > 100)
+        playerHealth.currentHealth += amount;
+        if (playerHealth.currentHealth > 100)
         {
-            currentHealth = 100;
+            playerHealth.currentHealth = 100;
         }
     }
 
     public void TakeDamage(int damage)
     {
-        currentHealth -= damage;
-        GameManager.Instance.playerController.SetAnimate("Hit");
+        playerHealth.currentHealth -= damage;
+        playerController.SetAnimate("Hit");
         hitNum.PlayAnim(damage); // 播放伤害数字动画
 
-        if (currentHealth <= 0)
+        if (playerHealth.currentHealth <= 0)
         {
-            currentHealth = 0;
+            playerHealth.currentHealth = 0;
             GameManager.Instance.uiManager.UpdateUI();
             Die();
         }
@@ -66,8 +62,8 @@ public class Player : MonoBehaviour
     private void Die()
     {
         isDead = true;
-        GameManager.Instance.playerController.SetAnimate("Dead");
-        GameManager.Instance.playerController.StopMovement(); // 停止玩家移动
+        playerController.SetAnimate("Dead");
+        playerController.StopMovement(); // 停止玩家移动
 
         //动画播放完毕后，Destory(gameObject)
         Destroy(gameObject, 1.5f);

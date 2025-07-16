@@ -33,6 +33,7 @@ public class UIManager : MonoBehaviour
     public void Init()
     {
         player = GameManager.Instance.player;
+
         if (player == null)
         {
             Debug.LogWarning("Player对象未找到，请确保GameManager已正确初始化");
@@ -56,23 +57,26 @@ public class UIManager : MonoBehaviour
         waveCountText = canvasTransform.Find("Mid_Top/Text_KillNum").GetComponent<TMP_Text>();
         waveCountText.text = "1";
         playerHPSlider = canvasTransform.Find("Left/HP/Slider").GetComponent<Slider>();
-        playerHPSlider.value = (float)player.currentHealth / player.maxHealth;
+        playerHPSlider.value = (float)player.playerHealth.currentHealth / player.playerHealth.maxHealth;
         playerXPSlider = canvasTransform.Find("Left/XP/Slider").GetComponent<Slider>();
-        playerXPSlider.value = (float)player.currentLevelXP / player.NextLevelXP;
+        playerXPSlider.value = (float)player.playerHealth.currentLevelXP / player.playerHealth.NextLevelXP;
 
         restartButton = canvasTransform.Find("GameOverPanel/Panel/RestartButton").GetComponent<Button>();
         restartButton.onClick.AddListener(GameManager.Instance.sceneLoadManager.LoadGameScene);
         mainMenuButton = canvasTransform.Find("GameWinPanel/Panel/MainMenuButton").GetComponent<Button>();
         mainMenuButton.onClick.AddListener(GameManager.Instance.sceneLoadManager.LoadMainMenu);
+
+        Debug.Log("UIManager 初始化完成");
+        UpdateUI();
     }
 
     public void UpdateUI()
     {
-        playerHPText.text = $"{player.currentHealth}/{player.maxHealth}";
-        playerHPSlider.value = (float)player.currentHealth / player.maxHealth;
-        playerXPSlider.value = (float)player.currentLevelXP / player.NextLevelXP;
-        playerHPSlider.DOValue((float)player.currentHealth / player.maxHealth, 1f).SetEase(Ease.OutBack);
-        playerXPSlider.DOValue((float)player.currentLevelXP / player.NextLevelXP, 1f).SetEase(Ease.OutBack);
+        playerHPText.text = $"{player.playerHealth.currentHealth}/{player.playerHealth.maxHealth}";
+        playerHPSlider.value = (float)player.playerHealth.currentHealth / player.playerHealth.maxHealth;
+        playerXPSlider.value = (float)player.playerHealth.currentLevelXP / player.playerHealth.NextLevelXP;
+        playerHPSlider.DOValue((float)player.playerHealth.currentHealth / player.playerHealth.maxHealth, 1f).SetEase(Ease.OutBack);
+        playerXPSlider.DOValue((float)player.playerHealth.currentLevelXP / player.playerHealth.NextLevelXP, 1f).SetEase(Ease.OutBack);
     }
 
     public void ShowPanel(string panelName)

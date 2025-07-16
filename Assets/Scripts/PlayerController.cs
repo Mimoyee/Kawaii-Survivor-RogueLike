@@ -5,10 +5,11 @@ public class PlayerController : MonoBehaviour
 {
     private Rigidbody2D rb;
     private Animator animator;
- 
+
     [SerializeField] MobileJoystick joystick;
     public float speed = 5f;
     public bool isInitDone = false;
+    public bool startToMove = false; // 是否开始移动
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -26,7 +27,7 @@ public class PlayerController : MonoBehaviour
 
         if (GameManager.Instance.player.isDead) return; //如果玩家不存在或已死亡，则不执行任何操作
 
-        if (isInitDone)
+        if (isInitDone && startToMove)
         {
             Move();
         }
@@ -44,7 +45,7 @@ public class PlayerController : MonoBehaviour
 
         if (rb.velocity != Vector2.zero)
         {
-            //等待上个动画播放完毕后，再设置移动动画
+            //当前动画不是HIt动画状态下，再设置移动动画
             if (!animator.GetCurrentAnimatorStateInfo(0).IsName("Hit"))
             {
                 SetAnimate("Move");
@@ -52,7 +53,7 @@ public class PlayerController : MonoBehaviour
         }
         else
         {
-            //等待上个动画播放完毕后，再设置空闲动画, 在不是HIt动画状态下才设置空闲动画
+            //在不是HIt动画状态下才设置空闲动画，再设置空闲动画, 
             if (!animator.GetCurrentAnimatorStateInfo(0).IsName("Hit"))
             {
                 SetAnimate("Idle");
@@ -75,6 +76,11 @@ public class PlayerController : MonoBehaviour
     public void StopMovement()
     {
         rb.velocity = Vector2.zero; // 停止玩家移动
-       
+
+    }
+
+    public void StartMovement()
+    {
+        startToMove = true; // 开始移动
     }
 }

@@ -6,7 +6,6 @@ public class Enemy : MonoBehaviour
 {
     [Header("引用")]
     EnemyMovement enemyMovement;
-
     [HideInInspector] public bool isDead = false;
     [Header("敌人参数设置")]
     private float nextAttackTime = 0f;
@@ -17,23 +16,29 @@ public class Enemy : MonoBehaviour
         enemyMovement = GetComponent<EnemyMovement>();
     }
 
-    public void Attack(int damage)
+    public void Attack()
     {
         if (GameManager.Instance.player != null && !isDead)
         {
+
             if (Time.time > nextAttackTime)//攻击间隔
             {
                 nextAttackTime = Time.time + attackInterval;
                 //播放攻击动画
                 enemyMovement.SetAnimate("Attack");
                 //这里可以添加攻击逻辑，比如减少玩家的生命值等
-                GameManager.Instance.player.TakeDamage(damage);
+
                 //自爆攻击
                 //enemyMovement.Die(); 
+                //Debug.Log("攻击玩家");
             }
             else //攻击间隔未到,待机
             {
-                enemyMovement.SetAnimate("Idle"); ;
+                //如果当前动画状态不是攻击，才设置待机动画
+                if (!enemyMovement.GetCurrentAnimatorStateInfo("Attack"))
+                {
+                    enemyMovement.SetAnimate("Idle");
+                }
             }
         }
         else
@@ -41,6 +46,12 @@ public class Enemy : MonoBehaviour
             Debug.LogWarning("Player对象未设置，无法攻击玩家");
         }
     }
+
+    public void DamagePlayer()
+    {
+        GameManager.Instance.player.TakeDamage(damage);
+    }
+
 
 
 }
