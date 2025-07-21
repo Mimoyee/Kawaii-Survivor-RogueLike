@@ -14,10 +14,10 @@ public class Player : MonoBehaviour
     [HideInInspector] public bool isDead = false; // 玩家是否死亡
     private HitNum hitNum; // HitNum组件引用
 
-    // void Start()
-    // {
-    //     Init();
-    // }
+    void Start()
+    {
+        //Init();
+    }
 
 
     public void Init()
@@ -38,10 +38,8 @@ public class Player : MonoBehaviour
     public void Heal(int amount)
     {
         playerHealth.currentHealth += amount;
-        if (playerHealth.currentHealth > 100)
-        {
-            playerHealth.currentHealth = 100;
-        }
+        playerHealth.currentHealth = Mathf.Clamp(playerHealth.currentHealth, 0, playerHealth.maxHealth);
+        GameManager.Instance.uiManager.UpdateUI(); // 更新UI显示
     }
 
     public void TakeDamage(int damage)
@@ -49,6 +47,7 @@ public class Player : MonoBehaviour
         playerHealth.currentHealth -= damage;
         playerController.SetAnimate("Hit");
         hitNum.PlayAnim(damage); // 播放伤害数字动画
+        playerHealth.currentHealth = Mathf.Clamp(playerHealth.currentHealth, 0, playerHealth.maxHealth);
 
         if (playerHealth.currentHealth <= 0)
         {

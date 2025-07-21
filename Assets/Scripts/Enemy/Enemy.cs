@@ -6,6 +6,9 @@ public class Enemy : MonoBehaviour
 {
     [Header("引用")]
     EnemyMovement enemyMovement;
+    [Header("敌人生命")]
+    [SerializeField] private int maxHealth = 100;
+    [SerializeField] private int currentHealth;
     [HideInInspector] public bool isDead = false;
     [Header("敌人参数设置")]
     private float nextAttackTime = 0f;
@@ -14,6 +17,7 @@ public class Enemy : MonoBehaviour
     void Start()
     {
         enemyMovement = GetComponent<EnemyMovement>();
+        currentHealth = maxHealth; //初始化当前生命值为
     }
 
     public void Attack()
@@ -50,6 +54,22 @@ public class Enemy : MonoBehaviour
     public void DamagePlayer()
     {
         GameManager.Instance.player.TakeDamage(damage);
+    }
+
+    public void TakeDamage(int damage)
+    {
+        if (isDead) return; // 如果敌人已经死亡，直接返回
+        currentHealth -= damage; // 减少当前生命值
+        currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth); // 确保当前生命值不小于0
+        // 处理敌人受到伤害逻辑
+        Debug.Log($"敌人受到 {damage} 点伤害");
+        // 这里可以添加受伤动画或其他逻辑
+
+        // 检查敌人是否死亡
+        if (currentHealth <= 0)
+        {
+            enemyMovement.Die();
+        }
     }
 
 

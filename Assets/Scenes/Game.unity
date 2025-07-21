@@ -8407,11 +8407,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 2978039900933115878, guid: 933437f509deaf24394825d23aacc6cd, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 3.98
+      value: 10.8
       objectReference: {fileID: 0}
     - target: {fileID: 2978039900933115878, guid: 933437f509deaf24394825d23aacc6cd, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -1.01
+      value: -0.8
       objectReference: {fileID: 0}
     - target: {fileID: 2978039900933115878, guid: 933437f509deaf24394825d23aacc6cd, type: 3}
       propertyPath: m_LocalPosition.z
@@ -9401,7 +9401,7 @@ MonoBehaviour:
   m_MinValue: 0
   m_MaxValue: 1
   m_WholeNumbers: 0
-  m_Value: 0.796
+  m_Value: 0.044
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -22186,6 +22186,18 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 423238050}
     m_Modifications:
+    - target: {fileID: 1844903691910555573, guid: 35471d524c5a7e34eae80c77229b3032, type: 3}
+      propertyPath: _maxScanNum
+      value: 15
+      objectReference: {fileID: 0}
+    - target: {fileID: 1844903691910555573, guid: 35471d524c5a7e34eae80c77229b3032, type: 3}
+      propertyPath: _scanInterval
+      value: 0.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1844903691910555573, guid: 35471d524c5a7e34eae80c77229b3032, type: 3}
+      propertyPath: _attackCooldown
+      value: 0.1
+      objectReference: {fileID: 0}
     - target: {fileID: 2094963207879657014, guid: 35471d524c5a7e34eae80c77229b3032, type: 3}
       propertyPath: joystick
       value: 

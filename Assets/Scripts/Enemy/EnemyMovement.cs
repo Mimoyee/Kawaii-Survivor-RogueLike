@@ -2,45 +2,55 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// 控制敌人移动行为的脚本
+/// 主要功能：
+/// - 管理敌人的移动逻辑
+/// - 处理攻击和警告范围检测
+/// - 控制敌人动画状态
+/// - 处理敌人死亡逻辑
+/// </summary>
 public class EnemyMovement : MonoBehaviour
 {
     [Header("引用")]
-    [SerializeField] private Enemy enemy;
-
-    [SerializeField] private GameObject fx_dead;
-    GameObject canvasObject;
-    private Vector3 centerPosition;
+    [SerializeField] private Enemy enemy;  // 敌人基础组件引用
+    [SerializeField] private GameObject fx_dead;  // 死亡特效对象
+    private GameObject canvasObject;  // UI画布对象
+    private Vector3 centerPosition;  // 敌人中心位置(用于范围检测)
 
     [Header("敌人参数设置")]
-    //[SerializeField] private float health = 100f;
-    [SerializeField] private float moveSpeed = 2f;
-    //[SerializeField] private float moveSpeedFast = 2f;
-    private float startSpeed = 0f;
-    [SerializeField] private float attackRange = 1f;
-    [SerializeField] private float warnningRange = 3f;
+    [SerializeField] private float moveSpeed = 2f;  // 基础移动速度
+    private float startSpeed = 0f;  // 初始移动速度备份
+    [SerializeField] private float attackRange = 1f;  // 攻击触发范围
+    [SerializeField] private float warnningRange = 3f;  // 警告触发范围
 
+    // 动画相关组件
+    private Animator animator;  // 动画控制器
+    private GameObject otherObject;  // 其他附属对象
+    private GameObject enemySprite;  // 敌人精灵对象
+    private GameObject spawnIndicator;  // 出生指示器
+    private Rigidbody2D rb;  // 刚体组件
 
-    //动画
-    private Animator animator;
-    private GameObject otherObject;
-    private GameObject enemySprite;
-    private GameObject spawnIndicator;
-    private Rigidbody2D rb;
-
-    bool startToMove = false;
+    private bool startToMove = false;  // 是否开始移动的标志
 
     [Header("Gizmos设置")]
-    [SerializeField] bool showGizmos = true;
+    [SerializeField] private bool showGizmos = true;  // 是否显示调试范围
 
+    /// <summary>
+    /// 初始化敌人移动组件
+    /// </summary>
     void Start()
     {
         Init();
-        StartCoroutine(ShowEnemySprite()); //延迟显示敌人Sprite
+        StartCoroutine(ShowEnemySprite()); // 延迟显示敌人Sprite
     }
 
+    /// <summary>
+    /// 每帧更新敌人状态
+    /// </summary>
     void Update()
     {
-        if (enemy.isDead || !startToMove) return; //如果敌人已经死亡或尚未出生，则不执行任何操作
+        if (enemy.isDead || !startToMove) return; // 如果敌人已经死亡或尚未出生，则不执行任何操作
         if (GameManager.Instance.player == null) return;
 
         if (GameManager.Instance.player.isDead)
@@ -59,6 +69,9 @@ public class EnemyMovement : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// 初始化敌人移动组件
+    /// </summary>
     void Init()
     {
         animator = GetComponent<Animator>();
@@ -77,11 +90,13 @@ public class EnemyMovement : MonoBehaviour
         fx_dead?.SetActive(false); // 确保死亡特效未激活
 
         moveSpeed = Random.Range(moveSpeed * 0.8f, moveSpeed * 1.8f); //随机设置敌人移动速度
-        //moveSpeedFast = moveSpeed * 1.3f; //设置快速移动速度
         startSpeed = moveSpeed;
-
     }
 
+    /// <summary>
+    /// 延迟显示敌人精灵的协程
+    /// </summary>
+    /// <returns>等待时间</returns>
     IEnumerator ShowEnemySprite()
     {
         yield return new WaitForSeconds(GameManager.Instance.delayStartTime);
@@ -96,9 +111,12 @@ public class EnemyMovement : MonoBehaviour
 
         yield return new WaitForSeconds(0.3f); // 等待动画播放完成
         startToMove = true;// 敌人开始移动
-        //GameManager.Instance.player.playerController.startToMove = true; // 开始玩家移动
     }
 
+    /// <summary>
+    /// 设置敌人动画状态
+    /// </summary>
+    /// <param name="stateName">要播放的动画状态名称</param>
     public void SetAnimate(string stateName)
     {
         if (animator != null)
@@ -111,6 +129,9 @@ public class EnemyMovement : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// 敌人跟随玩家移动的逻辑
+    /// </summary>
     public void FollowPlayer()
     {
         if (GameManager.Instance.player != null)
@@ -134,21 +155,29 @@ public class EnemyMovement : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// 检测敌人是否进入警告范围
+    /// </summary>
+    /// <returns>是否在警告范围内</returns>
     public bool InWarnninRange()
     {
-        //centerPosition = new Vector3(transform.position.x, transform.position.y + 0.5f, transform.position.z); //获取敌人中心位置
         var enemyDistanceToPlayer = Vector2.Distance(transform.position, GameManager.Instance.player.transform.position);
-        return enemyDistanceToPlayer <= warnningRange; //如果敌人与玩家之间的距离小于等于指定的距离，则警告玩家
+        return enemyDistanceToPlayer <= warnningRange;
     }
 
+    /// <summary>
+    /// 检测敌人是否进入攻击范围
+    /// </summary>
+    /// <returns>是否在攻击范围内</returns>
     public bool InAttackRange()
     {
-        //centerPosition = new Vector3(transform.position.x, transform.position.y + 0.5f, transform.position.z); //获取敌人中心位置
         var enemyDistanceToPlayer = Vector2.Distance(transform.position, GameManager.Instance.player.transform.position);
         return enemyDistanceToPlayer <= attackRange;
     }
 
-
+    /// <summary>
+    /// 处理敌人死亡逻辑
+    /// </summary>
     public void Die()
     {
         enemy.isDead = true;
@@ -160,6 +189,11 @@ public class EnemyMovement : MonoBehaviour
         Destroy(gameObject, 2f); //销毁敌人
     }
 
+    /// <summary>
+    /// 获取当前动画状态
+    /// </summary>
+    /// <param name="stateName">要检查的动画状态名称</param>
+    /// <returns>是否处于指定动画状态</returns>
     public bool GetCurrentAnimatorStateInfo(string stateName)
     {
         if (animator != null)
@@ -173,17 +207,15 @@ public class EnemyMovement : MonoBehaviour
         }
     }
 
-
-
-    public void OnDrawGizmosSelected()
+    /// <summary>
+    /// 绘制调试范围
+    /// </summary>
+    public void OnDrawGizmos()
     {
-        //centerPosition = new Vector3(transform.position.x, transform.position.y + 0.5f, transform.position.z); //获取敌人中心位置
         if (!showGizmos) return;
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(transform.position, attackRange);
         Gizmos.color = Color.green;
         Gizmos.DrawWireSphere(transform.position, warnningRange);
     }
-
-
 }
