@@ -98,20 +98,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4a34d494fbfa4f84b91b3f4280a9d3a7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  damage: 100
   animator: {fileID: 0}
   hitDetectionTransform: {fileID: 7236074707810729566}
   closestEnemy: {fileID: 0}
-  _scanRadius: 2.4
-  _hitDectectionRadius: 0.42
+  _scanRadius: 2
+  _hitDectectionRadius: 0.58
   _enemyLayer:
     serializedVersion: 2
     m_Bits: 128
-  _scanInterval: 10
+  _scanInterval: 0.1
   _maxScanNum: 20
   _scanColliders: []
   _maxhitNum: 10
   _hitColliders: []
-  _directionSpeed: 10
+  _directionSpeed: 15
   showGizmos: 1
 --- !u!1 &3037624812197400862
 GameObject:

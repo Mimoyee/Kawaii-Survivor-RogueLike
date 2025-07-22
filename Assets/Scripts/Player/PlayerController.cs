@@ -14,7 +14,10 @@ public class PlayerController : MonoBehaviour
     {
         rb = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
-        if (joystick == null) Debug.LogWarning("Joystick脚本未添加到PlayerController脚本上");
+        if (joystick == null)
+        {
+            joystick = FindFirstObjectByType<MobileJoystick>();
+        }
     }
 
     void FixedUpdate()
@@ -36,9 +39,6 @@ public class PlayerController : MonoBehaviour
 
     void Move()
     {
-        // float moveHorizontal = Input.GetAxis("Horizontal");
-        // float moveVertical = Input.GetAxis("Vertical");
-        // Vector2 movement = new Vector2(moveHorizontal, moveVertical);
 
         //从摇杆获取移动向量
         rb.velocity = joystick.GetMoveVector() * speed * Time.deltaTime;
