@@ -25,7 +25,7 @@ public class EnemyMovement : MonoBehaviour
     [SerializeField] private float warnningRange = 3f;  // 警告触发范围
 
     // 动画相关组件
-    private Animator animator;  // 动画控制器
+    public Animator animator;  // 动画控制器
     private GameObject otherObject;  // 其他附属对象
     private GameObject enemySprite;  // 敌人精灵对象
     private GameObject spawnIndicator;  // 出生指示器
@@ -102,7 +102,7 @@ public class EnemyMovement : MonoBehaviour
         yield return new WaitForSeconds(GameManager.Instance.delayStartTime);
         enemySprite?.SetActive(true); // 显示敌人Sprite  
         otherObject?.SetActive(true); // 激活其他对象
-        canvasObject.SetActive(false); // 激活Canvas对象
+        canvasObject.SetActive(true); // 激活Canvas对象
 
         spawnIndicator?.SetActive(false); // 隐藏出生点指示器
         rb.velocity = Vector2.zero; //清空速度
@@ -187,24 +187,6 @@ public class EnemyMovement : MonoBehaviour
         rb.velocity = Vector2.zero; //清空速度
         otherObject?.SetActive(false);
         Destroy(gameObject, 2f); //销毁敌人
-    }
-
-    /// <summary>
-    /// 获取当前动画状态
-    /// </summary>
-    /// <param name="stateName">要检查的动画状态名称</param>
-    /// <returns>是否处于指定动画状态</returns>
-    public bool GetCurrentAnimatorStateInfo(string stateName)
-    {
-        if (animator != null)
-        {
-            return animator.GetCurrentAnimatorStateInfo(0).IsName(stateName);
-        }
-        else
-        {
-            Debug.LogWarning("Animator组件未设置，无法获取当前动画状态");
-            return false;
-        }
     }
 
     /// <summary>

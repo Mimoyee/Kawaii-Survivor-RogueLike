@@ -22175,6 +22175,22 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 423238050}
     m_Modifications:
+    - target: {fileID: 632305214696367354, guid: 35471d524c5a7e34eae80c77229b3032, type: 3}
+      propertyPath: maxHealth
+      value: 1000
+      objectReference: {fileID: 0}
+    - target: {fileID: 1844903691910555573, guid: 35471d524c5a7e34eae80c77229b3032, type: 3}
+      propertyPath: damage
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 1844903691910555573, guid: 35471d524c5a7e34eae80c77229b3032, type: 3}
+      propertyPath: _scanRadius
+      value: 2.45
+      objectReference: {fileID: 0}
+    - target: {fileID: 1844903691910555573, guid: 35471d524c5a7e34eae80c77229b3032, type: 3}
+      propertyPath: _scanInterval
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 9073170681621915510, guid: 35471d524c5a7e34eae80c77229b3032, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0

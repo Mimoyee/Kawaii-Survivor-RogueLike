@@ -25,6 +25,7 @@ public class Weapon : MonoBehaviour
     [Header("显示Gizmos射线范围")][SerializeField] bool showGizmos = true;
     // 定义武器状态
     private State state = State.Idle;
+    private List<Enemy> damagedEnemys = new List<Enemy>(); // 记录已经攻击过的敌人
 
     enum State
     {
@@ -58,8 +59,7 @@ public class Weapon : MonoBehaviour
                 AutoAim();
                 break;
             case State.Attack:
-                if (closestEnemy != null) Attack();
-                else state = State.Idle;
+                Attacking();
                 break;
         }
     }
@@ -86,12 +86,8 @@ public class Weapon : MonoBehaviour
 
     private void HandleIdleState()
     {
-        // 没有敌人时的待机处理
-        if (!animator.GetCurrentAnimatorStateInfo(0).IsName("Idle"))
-        {
-            animator.SetTrigger("Idle");
-        }
-
+        state = State.Idle;
+        //animator.SetTrigger("Idle");
         // 缓慢转向默认方向
         transform.up = Vector3.Lerp(transform.up, Vector3.up, Time.deltaTime * _directionSpeed);
     }
@@ -100,44 +96,61 @@ public class Weapon : MonoBehaviour
     {
         if (closestEnemy == null)
         {
-            state = State.Idle;
-            HandleIdleState();
+            // 缓慢转向默认方向
+            transform.up = Vector3.Lerp(transform.up, Vector3.up, Time.deltaTime * _directionSpeed);
             return;
         }
         // 计算目标方向
         Vector3 targetDirection = (closestEnemy.position - transform.position).normalized;
         // 平滑朝向
         transform.up = Vector3.Lerp(transform.up, targetDirection, Time.deltaTime * _directionSpeed);
-        // 切换到攻击状态
-        state = State.Attack;
     }
 
     private void Attack()
     {
         // 检测攻击范围内的敌人
         int hitNumColliders = Physics2D.OverlapCircleNonAlloc(hitDetectionTransform.position, _hitDectectionRadius, _hitColliders, _enemyLayer);
-        if (hitNumColliders <= 0)
-        {
-            state = State.Idle;
-            return;
-        }
-        bool attacked = false;
+
+        if (hitNumColliders <= 0) return;
+
         for (int i = 0; i < hitNumColliders; i++)
         {
-            if (_hitColliders[i] == null) continue;
             Enemy enemy = _hitColliders[i].GetComponent<Enemy>();
+
             if (enemy != null)
             {
-                enemy.TakeDamage(damage);
-                attacked = true;
+                if (!damagedEnemys.Contains(enemy))
+                {
+                    enemy.TakeDamage(damage); // 攻击敌人
+                    damagedEnemys.Add(enemy); // 添加敌人到已攻击列表
+                }
             }
+
+            StopAttack();
         }
-        if (attacked)
-        {
-            if (!animator.GetCurrentAnimatorStateInfo(0).IsName("Attack"))
-                animator.SetTrigger("Attack");
-        }
+
     }
+
+    [NaughtyAttributes.Button]//添加按钮到面板
+    public void StartAttack()
+    {
+        // 开始攻击时触发攻击动画, 通过动画的检测武器碰撞到的敌人
+        state = State.Attack;
+        animator.SetTrigger("Attack");
+        damagedEnemys.Clear(); // 清空已攻击的敌人列表
+    }
+
+    public void Attacking()
+    {
+        Attack();
+    }
+
+    public void StopAttack()
+    {
+        HandleIdleState(); // 切换到待机状态
+        damagedEnemys.Clear(); // 清空已攻击的敌人列表
+    }
+
 
     public void OnDrawGizmos()
     {
